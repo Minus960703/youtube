@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styles from './app.module.css';
 
 import SearchHeader from './components/search_header/search_header';
@@ -11,21 +11,22 @@ function App({ youtube }) {
 
   const selectVideo = (video) => {
     setSelectedVideo(video);
-  }
-  const search = query => {
+  };
+
+  const search = useCallback(query => {
     youtube
       .search(query)
       .then(videos => {
         setVideos(videos);
         setSelectedVideo(null);
       });
-  };
+  }, []);  //메모리에 많은 영향이 갈수도있다.
 
   useEffect(() => {
     youtube
       .mostPopular()
       .then(videos => setVideos(videos));
-  }, []); //[]는 Mount가 되었을때만, 호출 [name]은 name이 업데이트 될때마다 호출
+  }, [youtube]); //[]는 Mount가 되었을때만, 호출 [name]은 name이 업데이트 될때마다 호출
   return (
     <div className={styles.app}>
       <SearchHeader onSearch={search} />
